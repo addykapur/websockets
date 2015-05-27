@@ -1,0 +1,189 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!--
+  Licensed to the Apache Software Foundation (ASF) under one or more
+  contributor license agreements.  See the NOTICE file distributed with
+  this work for additional information regarding copyright ownership.
+  The ASF licenses this file to You under the Apache License, Version 2.0
+  (the "License"); you may not use this file except in compliance with
+  the License.  You may obtain a copy of the License at
+
+      http://www.apache.org/licenses/LICENSE-2.0
+
+  Unless required by applicable law or agreed to in writing, software
+  distributed under the License is distributed on an "AS IS" BASIS,
+  WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+  See the License for the specific language governing permissions and
+  limitations under the License.
+-->
+<html xmlns="http://www.w3.org/1999/xhtml" xml:lang="en">
+<head>
+    <title>WebSocket Example 4</title>
+    <!-- Latest compiled and minified CSS -->
+    <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.4/css/bootstrap.min.css"/>
+    <style type="text/css"><![CDATA[
+        input#chat {
+            width: 410px
+        }
+
+        #console-container {
+            width: 400px;
+        }
+
+        #chatlog {
+            border: 1px solid #CCCCCC;
+            border-right-color: #999999;
+            border-bottom-color: #999999;
+            height: 170px;
+            overflow-y: scroll;
+            padding: 5px;
+            width: 100%;
+        }
+
+        #chatlog p {
+            padding: 0;
+            margin: 0;
+        }
+    ]]></style>
+
+    <script type="application/javascript"><![CDATA[
+        "use strict";
+
+        var Chat = {};
+
+        Chat.socket = null;
+
+        Chat.connect = (function(host) {
+            if ('WebSocket' in window) {
+                Chat.socket = new WebSocket(host);
+            } else if ('MozWebSocket' in window) {
+                Chat.socket = new MozWebSocket(host);
+            } else {
+                Console.log('Error: WebSocket is not supported by this browser.');
+                return;
+            }
+
+            Chat.socket.onopen = function () {
+                Console.log('Info: WebSocket connection opened.');
+                document.getElementById('chat').onkeydown = function(event) {
+                    if (event.keyCode == 13) {
+                        Chat.sendMessage();
+                    }
+                };
+            };
+
+            Chat.socket.onclose = function () {
+                document.getElementById('chat').onkeydown = null;
+                Console.log('Info: WebSocket closed.');
+            };
+
+            Chat.socket.onmessage = function (message) {
+                Console.log(message.data);
+            };
+        });
+
+        Chat.initialize = function() {
+            if (window.location.protocol == 'http:') {
+                Chat.connect('ws://' + window.location.host + '/websocket/chat4');
+            } else {
+                Chat.connect('wss://' + window.location.host + '/websocket/chat4');
+            }
+        };
+
+        Chat.sendMessage = (function() {
+            var data = { };
+            var username = document.getElementById('username').value;
+            if(username == null || username == "" ) {
+                // no username entered
+                //TODO: Add validation
+            }else
+                document.getElementById('username').disabled = true;
+
+            var message = document.getElementById('chat').value;
+            if (message != '') {
+                data.username=username;
+                data.message=message;
+                var json = JSON.stringify(data);
+                Chat.socket.send(json);
+                document.getElementById('chat').value = '';
+            }
+        });
+
+        var Console = {};
+
+        Console.log = (function(message) {
+            var chatlog = document.getElementById('chatlog');
+            var p = document.createElement('p');
+            p.style.wordWrap = 'break-word';
+//            p.innerHTML = message;
+//            chatlog.appendChild(p);
+
+            try {
+                var p2 = document.createElement('p');
+                var outgoingMsg = JSON.parse(message);
+                p2.innerHTML = outgoingMsg.message;
+                chatlog.appendChild(p2);
+
+                var userCount = document.getElementById('userCount');
+                userCount.innerHTML = outgoingMsg.activeUsers;
+
+                var noOfMsgs = document.getElementById('noOfMsgs');
+                noOfMsgs.innerHTML = outgoingMsg.noOfMsgs;
+
+                var leaderBoardValues = outgoingMsg.leaderBoard;
+                var options = {
+                    valueNames: [ 'nickname', 'noOfMsgs' ]
+                };
+//                document.getElementById('leader-board-list');
+                var leaderBoardList = new List('leader-board-list', options);
+                leaderBoardList.clear();
+                leaderBoardList.add(leaderBoardValues);
+            }catch(err) {
+                console.log(err);
+            }
+
+
+            while (chatlog.childNodes.length > 25) {
+                chatlog.removeChild(chatlog.firstChild);
+            }
+            chatlog.scrollTop = chatlog.scrollHeight;
+
+        });
+
+        Chat.initialize();
+
+    ]]></script>
+</head>
+<body>
+
+<div class="container">
+    <h1>WebSocket chat with Leader Board</h1>
+    <p>
+        <input type="text" placeholder="Your Name" id="username" />
+    </p>
+    <p>
+        <input type="text" placeholder="type and press enter to chat" id="chat" />
+    </p>
+    <div id="console-container">
+        <div id="chatlog"/>
+    </div>
+    <div id="count-container">
+       No. of active Users: <b><span class="badge" id="userCount"/></b>.
+        You have sent <b><span class="badge" id="noOfMsgs" /></b> messages
+    </div>
+
+    <div id="leader-board-list">
+        <table class="table">
+            <caption>Leader Board</caption>
+            <tbody class="list">
+            <tr>
+                <td class="nickname"></td>  <td class="noOfMsgs"/>
+            </tr>
+            </tbody>
+        </table>
+    </div>
+</div>
+<script src="//cdnjs.cloudflare.com/ajax/libs/list.js/1.1.1/list.min.js"></script>
+<script src="https://ajax.googleapis.com/ajax/libs/jquery/1.11.2/jquery.min.js"></script>
+<script src="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.4/js/bootstrap.min.js"></script>
+</body>
+</html>

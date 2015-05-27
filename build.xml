@@ -1,0 +1,68 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<project name="WebSockets" basedir="." default="build">
+	<property file="build.properties"/>
+	<property name="src.dir" value="src"/>
+	<property name="web.dir" value="web"/>
+	<property name="build.dir" value="${web.dir}/WEB-INF/classes"/>
+	<property name="name" value="websockets"/>
+
+	<path id="master-classpath">
+		<fileset dir="${web.dir}/WEB-INF/lib">
+			<include name="*.jar"/>
+		</fileset>
+		<fileset dir="${appserver.lib}">
+			<include name="servlet*.jar"/>
+			<include name="tomcat-*.jar"/>
+			<include name="websocket-api.jar"/>
+		</fileset>
+		<pathelement path="${build.dir}"/>
+	</path>
+
+	<target name="usage">
+		<echo message=""/>
+		<echo message="${name} build file"/>
+		<echo message="-----------------------------------"/>
+		<echo message=""/>
+		<echo message="Available targets are:"/>
+		<echo message=""/>
+		<echo message="build     --> Build the application"/>
+
+		<echo message=""/>
+	</target>
+	<target name="clean" description="cleanup">
+
+		<deltree dir="${build.dir}"/>
+		<mkdir dir="${build.dir}" />
+
+
+	</target>
+	<target name="compile" description="Compile main source tree java files" depends="clean">
+		<mkdir dir="${build.dir}"/>
+		<javac destdir="${build.dir}" source="1.8" target="1.8" debug="true"
+			   deprecation="false" optimize="false" failonerror="true" includeantruntime="false">
+			<src path="${src.dir}"/>
+			<classpath refid="master-classpath"/>
+		</javac>
+		<copy todir="${build.dir}" overwrite="yes">
+			<fileset dir="${src.dir}">
+				<exclude name="**/*.java"/>
+			</fileset>
+		</copy>
+	</target>
+
+
+
+	<target name="build" depends="compile" description="Build the war file">
+		<war destfile="${name}.war"
+			 webxml="${web.dir}/WEB-INF/web.xml">
+			<fileset dir="${web.dir}">
+				<include name="**/*.*"/>
+			</fileset>
+		</war>
+	</target>
+
+
+
+
+</project>
