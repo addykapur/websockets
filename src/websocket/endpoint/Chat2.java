@@ -29,7 +29,7 @@ import java.util.concurrent.atomic.AtomicInteger;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 
-@ServerEndpoint(value = "/websocket/chat2")
+@ServerEndpoint(value = "/chat2")
 public class Chat2 {
 
     private static final Logger log = Logger.getLogger(Chat2.class.getName());

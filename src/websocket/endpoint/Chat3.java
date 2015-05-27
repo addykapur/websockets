@@ -31,7 +31,7 @@ import java.util.concurrent.atomic.AtomicInteger;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 
-@ServerEndpoint(value = "/websocket/chat3",encoders = { MessageEncoder.class })
+@ServerEndpoint(value = "/chat3",encoders = { MessageEncoder.class })
 public class Chat3 {
 
     private static final Logger log = Logger.getLogger(Chat3.class.getName());
