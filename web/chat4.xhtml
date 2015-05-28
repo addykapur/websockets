@@ -164,31 +164,44 @@
 
 <div class="container">
     <h1>WebSocket chat with Leader Board</h1>
-    <p>
-        <input type="text" placeholder="Your Name" id="username" />
-    </p>
-    <p>
-        <input type="text" placeholder="type and press enter to chat" id="chat" />
-    </p>
-    <div id="console-container">
-        <div id="chatlog"/>
-    </div>
-    <div id="count-container">
-       No. of active Users: <b><span class="badge" id="userCount"/></b>.
-        You have sent <b><span class="badge" id="noOfMsgs" /></b> messages
+    <div class="row">
+        <div class="col-md-6">
+            <p>
+                <input type="text" placeholder="Your Name" id="username" />
+            </p>
+            <p>
+                <input type="text" placeholder="type and press enter to chat" id="chat" />
+            </p>
+            <div id="console-container">
+                <div id="chatlog"/>
+            </div>
+        </div>
+        <div class="col-md-6">
+            <div id="count-container">
+                <h3>No. of active Users: <b><span class="badge" id="userCount"/></b></h3>
+
+                <button class="btn btn-primary" type="button">
+                    Sent Messages <span class="badge" id="noOfMsgs">4</span>
+                </button>
+            </div>
+        </div>
     </div>
 
-    <div id="leader-board-list">
-        <table class="table">
-            <caption>Leader Board</caption>
-            <tbody class="list">
-            <tr>
-                <td class="nickname"></td>  <td class="noOfMsgs"/>
-            </tr>
-            </tbody>
-        </table>
-    </div>
+    <div class="row">
+        <div class="col-md-12">
 
+            <div id="leader-board-list">
+                <table class="table">
+                    <caption>Leader Board</caption>
+                    <tbody class="list">
+                    <tr>
+                        <td class="nickname"></td>  <td class="noOfMsgs"/>
+                    </tr>
+                    </tbody>
+                </table>
+            </div>
+        </div>
+    </div>
 </div>
 <script src="//cdnjs.cloudflare.com/ajax/libs/list.js/1.1.1/list.min.js"></script>
 <script src="https://ajax.googleapis.com/ajax/libs/jquery/1.11.2/jquery.min.js"></script>
